@@ -40,8 +40,6 @@ const arr = [1,"one", true,null,undefined,{},[]]
 console.log(arr)
 
 
-//Method : PushManager, pop , shift , unshift , indexOf, includes
-// Map, filter , find , flat ,flatMap
 
 arr[8]="NewValue";
 console.log(arr)
@@ -70,7 +68,11 @@ console.log(obj1)
 arr=[obj1,obj2]
 console.log(Object.entries(obj2))
 // console.log(arr[1][1]);
-
+// int fun()
+// {
+//      return 1+2; 
+// }
+    // int a=fun1()
 // function F1(p){
 //     console.log(p);
 //     p(3);
