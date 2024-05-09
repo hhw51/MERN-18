@@ -40,6 +40,8 @@ const arr = [1,"one", true,null,undefined,{},[]]
 console.log(arr)
 
 
+//Method : PushManager, pop , shift , unshift , indexOf, includes
+// Map, filter , find , flat ,flatMap
 
 arr[8]="NewValue";
 console.log(arr)
