@@ -17,7 +17,8 @@ console.log("arr3 = ",arr3)
 // ..rest=...spread
 
 //rest
-function restt(a , ...b){
+function restt(a , ...b)
+{
     console.log("a= ",a)
     console.log("b= ",b)
 }
