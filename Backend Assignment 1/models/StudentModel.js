@@ -26,6 +26,34 @@ module.exports = {
       };
     }
   },
+  getStudent: async () => {
+    try {
+      const Student = await models.Student.findOne({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Student,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
+  getStudentbyPK: async () => {
+    try {
+      const Student = await models.Student.findByPk({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Student,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
   deleteStudent: async (StudentID) => {
     try {
       const deleteStudent = await models.Student.destroy({

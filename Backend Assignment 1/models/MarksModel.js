@@ -13,9 +13,37 @@ module.exports = {
       return { error: error };
     }
   },
-  getAllMarkss: async () => {
+  getAllMarks: async () => {
     try {
       const Marks = await models.Marks.findAll({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Marks,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
+  getMarks: async () => {
+    try {
+      const Marks = await models.Marks.findOne({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Marks,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
+  getMarksbyPK: async () => {
+    try {
+      const Marks = await models.Marks.findByPk({
         attributes: { exclude: ["password"] },
       });
       return {

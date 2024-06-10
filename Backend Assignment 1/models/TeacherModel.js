@@ -28,6 +28,34 @@ module.exports = {
       };
     }
   },
+  getTeacher: async () => {
+    try {
+      const Teacher = await models.Teacher.findOne({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Teacher,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
+  getTeacherbyPK: async () => {
+    try {
+      const Teacher = await models.Teacher.findByPk({
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        response: Teacher,
+      };
+    } catch (error) {
+      return {
+        error: error,
+      };
+    }
+  },
   deleteTeacher: async (TeacherID) => {
     try {
       const deleteTeacher = await models.Teacher.destroy({
