@@ -1,0 +1,165 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Logo styles */
+.logo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.logo img {
+    width: 50px; /* Smaller logo size */
+    height: auto;
+}
+
+/* Burger menu styles */
+.burger {
+    position: absolute;
+    top: 10px;
+    left: 70px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.burger div {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Side navbar styles */
+.side-navbar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 70px;
+    z-index: 999;
+}
+
+.side-navbar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.side-navbar ul li {
+    padding: 8px 8px 8px 32px;
+    text-align: left;
+}
+
+.side-navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 25px;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-navbar ul li a:hover {
+    color: #f1f1f1;
+}
+
+/* Product grid styles */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin-top: 100px;
+    width: 100%;
+    max-width: 1200px;
+    justify-items: center;
+}
+
+.product-item {
+    text-align: center;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.product-item img {
+    width: 100%;
+    transition: transform 0.3s ease;
+}
+
+.product-item:hover img {
+    transform: scale(1.2);
+}
+
+.product-item p {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #333;
+}
+/* Top bar styles */
+.top-bar {
+    width: 100%;
+    color: #333;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.promotions p {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+    color: #333;
+}
+
+.menu-items {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.menu-items a {
+    color: #333;
+    text-decoration: none;
+    padding: 5px 15px;
+    font-size: 16px;
+}
+
+.menu-items a.hot {
+    color: #f00; /* Red for hot items */
+}
+
+.search-cart-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+}
+
+.search-cart-container input[type="text"] {
+    padding: 8px;
+    margin-right: 10px;
+}
+
+.cart-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Adjust the top margin of the product grid */
+.product-grid {
+    margin-top: 20px; /* Adjust based on total height of the top bar */
+}
