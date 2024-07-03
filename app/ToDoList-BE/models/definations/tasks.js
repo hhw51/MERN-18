@@ -1,27 +1,32 @@
+// UserHasTask
+// TaskHasType
+
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../../bin/dbConnection");
-const users = require("./users");
-class task extends Model {}
 
-task.init(
+class tasks extends Model {}
+
+tasks.init(
   {
     taskID: {
       primaryKey: true,
       type: DataTypes.STRING(255),
     },
     title: {
+      type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    description: {
       type: DataTypes.STRING(1000),
     },
-    //    foreign key always in many table , in case of 1-many
     userID: {
-        allowNull:false,
-        type:DataTypes.STRING(255),
-        references:{
-            model:users,
-            key:"userID"
-        },
-    },
+      allowNull: false,
+      type: DataTypes.STRING(255),
+      references:{
+        model: "users",
+        key: "userID"
+      }
+    }
   },
   {
     timestamps: true,
@@ -31,4 +36,4 @@ task.init(
   }
 );
 
-module.exports = task;
+module.exports = tasks;

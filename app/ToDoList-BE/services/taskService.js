@@ -1,66 +1,113 @@
 const taskModel = require("../models/taskModel");
-const { hash } = require("bcryptjs");
 const { v4: uuid } = require("uuid");
-const { response } = require("../app");
 
 module.exports = {
-  createtask: async (body) => {
+  // Index
+  getAllTasks: async () => {
     try {
-      body.password = await hash(body.password, 10);
-      body.taskID = uuid();
-      const task = await taskModel.createtask(body);
-      if (task.error) {
+      const user = await taskModel.index();
+      if (user.error) {
         return {
-          error: task.error,
+          error: user.error,
         };
       }
-      delete task.response.dataValues.password;
+
       return {
-        response: task.response,
-      };
-    } catch (error) {
-      return {
-        error: error,
-      };
-    }
-  },
-  getAlltasks: async () => {
-    try {
-      const tasks = await taskModel.getAlltasks();
-      if (tasks.error) {
-        return {
-          error: tasks.error,
-        };
-      }
-      return {
-        response: tasks.response,
+        response: user.response,
       };
     } catch (error) {
       return { error: error };
     }
   },
-//   deleteUser:async(userID)=>{
-//     try{const deleteUser=await userModel.deleteUser(userID)
-//         if(deleteUser.error || !deleteUser.response){
-//           return{
-//             error:{
-//               message:"UNABLE TO DELETE!",
-//               error: deleteUser?.error || deleteUser.response
-//             }
-//           }
-//         }
-//         return {
-//           response:{
-//             message:"USER IS DELETED!",
-//             response:user.response
-//           }
-//         }
-//     }catch(error){
-//       console.log(error," from service")
 
-//       return{
-//         error:error
-//       }
-//     }
-//   }
+  createTask: async (body) => {
+    try {
+      body.taskID = uuid();
+      const task = await taskModel.createTask(body);
+
+      if (task.error) {
+        return {
+          error: task.error,
+        };
+      }
+
+      return {
+        response: task.response,
+      };
+    } catch (error) {
+      console.log("Error in Service", error);
+      return {
+        error: error,
+      };
+    }
+  },
+
+  findUser: async (userId) => {
+    try {
+      const user = await taskModel.findUser(userId);
+      console.log("User found", user);
+
+      if (user.error) {
+        return {
+          error: user.error,
+        };
+      }
+
+      delete user.response.dataValues.password;
+      return {
+        response: user.response,
+      };
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  deleteUser: async ({ id }) => {
+    try {
+      const deleteUser = await taskModel.deleteUser(id);
+
+      if (deleteUser.error || !deleteUser.response) {
+        return {
+          error: {
+            message: "Error in deleting user",
+            error: deleteUser?.error || deleteUser.response,
+          },
+        };
+      }
+
+      return {
+        response: {
+          message: "User is deleted!",
+          response: deleteUser.response,
+        },
+      };
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  updteUser: async (body) => {
+    try {
+      const updateUser = await taskModel.updateUser(body);
+      console.log(updateUser.response[0]);
+      if (updateUser.error || !updateUser.response[0]) {
+        return {
+          error: {
+            message: "Error in update!",
+            error: updateUser?.error || updateUser.response,
+          },
+        };
+      }
+
+      return {
+        response: {
+          message: "User is update!",
+          response: updateUser.response,
+        },
+      };
+    } catch (error) {
+      console.log("Error from Service:", error);
+      return { error: error };
+    }
+  },
 };

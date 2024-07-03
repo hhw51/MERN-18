@@ -1,26 +1,22 @@
-const { response } = require("../app");
 const { models } = require("./index");
 
 module.exports = {
-  createUser: async (body) => {
+  index: async (body) => {
     try {
-      const user = await models.users.create({ ...body });
-      return {
-        response: user,
-      };
-    } catch (error) {
-      console.log(error);
-
-      return { error: error };
-    }
-  },
-  getAllUsers: async () => {
-    try {
-      const users = await models.users.findAll({
-        attributes: { exclude: ["password"] },
+      const task = await models.tasks.findAll({
+        attributes: {
+          exclude: ["createdAt", "userID"],
+        },
+        include: [
+          {
+            model: models.users,
+            attributes: ["userID", "userName"],
+          },
+        ],
       });
+
       return {
-        response: users,
+        response: task,
       };
     } catch (error) {
       return {
@@ -28,41 +24,19 @@ module.exports = {
       };
     }
   },
-  deleteUser: async (userID) => {
+
+  createTask: async (body) => {
     try {
-      const deleteUser = await models.users.destroy({
-        where: {
-          userID: userID,
-        },
-      });
+      console.log("I am in Model",body)
+      const task = await models.tasks.create({ ...body });
+
       return {
-        response: deleteUser,
+        response: task,
       };
     } catch (error) {
-      console.log(error," from model")
-      
       return {
-      error: error
-    }
-    }
-  },
-  updateUser: async (userID, ...body) => {
-    try {
-      const updateUser = await models.users.update(
-        { ...body },
-        {
-          where: {
-            userID: userID,
-          },
-        }
-      );
-      return {
-        response: updateUser,
+        error: error,
       };
-    } catch (error) {
-      return{
-        error: error
-      }
     }
   },
 };

@@ -1,94 +1,71 @@
-const joi=require("joi")
-let objs=[]
-const loginSchema=joi.object().keys({
-    username: joi.string().email(),
-    password:joi.string().min(6).max(18).required()
+const joi = require("joi");
+const authService = require("../services/authService");
+
+const loginSchema = joi.object().keys({
+  userName: joi.string().min(3).max(34).required(),
+  password: joi.string().min(6).max(30).required(),
 });
 
-const obj ={
-    login: async(req,res)=>{
-        try{
-        const validate = await loginSchema.validateAsync(req.query)
-        // console.log(validate)
-        if(validate)
-        {
-            objs.push(req.query)
-        }
-        // console.log("PASSWORD=",req.query.password)
-        // console.log("objs=",objs)
-        return res.send({
+const logoutSchema = joi.object().keys({
+  id: joi.number().required(),
+});
 
-            message:"login API",
-            data: validate
-        })
-    } catch(error){
-        return res.send({
-            message:error.message
-        })
-    }},
-    logout:async(req,res)=>{
-        try
-        {
-            const validate=await loginSchema.validateAsync(req.query)
-            if(validate)
-            {
-                console.log("BEFOREE REMOVALLL ",objs)
-                for(x=0;x<objs.length;x++)
-                {
-                    if(objs[x].username==req.body.username)
-                    {
-                        objs.splice(x, 1); // Remove the element at index x
-                        console.log("removeeed")
-                        fl=1
-                    }
-                }
-                console.log("after removeeee ",objs)
-            }
-            return res.send({
-            message:"logout API",
-            data: validate
-        })
-    } catch(error){
-            return res.send({
-                message:error.message
-            })
-        }
-    },
-    resetPassword:async(req,res)=>{
-        try{
-            var fl=0;
-            const validateee=await loginSchema.validateAsync(req.body)
-            if(validateee)
-            {
+const restPasswordSchema = joi.object().keys({
+  email: joi.string().email().required(),
+  password: joi.string().min(6).max(30).required(),
+  confirm_password: joi.ref("password"),
+});
 
-                console.log("password=",req.body.password)
-                for(x=0;x<objs.length;x++)
-                {
-                    console.log("objs=",objs[x])
-                    console.log("objs.username=",objs[x].username)
-                    console.log("objs.password=",objs[x].password)
-                    if(objs[x].username==req.body.username)
-                    {
-                        objs[x].username=req.body.username;
-                        objs[x].password=req.body.password;
-                        console.log("heheh")
-                        fl=1
-                    }
-                }
-                if(fl==1){      
-                    console.log("AFTER CHANGE ",objs)
-                }
-                    }
+module.exports = {
+  login: async (req, res) => {
+    try {
+      const validate = await loginSchema.validateAsync(req.body);
+      const user = await authService.login(validate);
+
+      if (user.error) {
         return res.send({
-            message:"resetPassword API",
-            data:validateee,
-            //how to print  if(fl==1) over here
-        })}
-        catch(error){
-            return res.send({
-                message:error.message
-            })
-        }
-    },
-}
-module.exports=obj;
+          error: user.error,
+        });
+      }
+      return res.send({
+        // message: "This is signin API",
+        response: user.response,
+      });
+    } catch (error) {
+      return res.send({
+        message: "error",
+        error: error,
+      });
+    }
+  },
+
+  logout: async (req, res) => {
+    try {
+      const validate = await logoutSchema.validateAsync(req.body);
+      return res.send({
+        message: "This is Logout API",
+        data: validate,
+      });
+    } catch (error) {
+      return res.send({
+        message: "This is Logout API",
+        data: error.message,
+      });
+    }
+  },
+
+  restPassword: async (req, res) => {
+    try {
+      const validate = await restPasswordSchema.validateAsync(req.body);
+      return res.send({
+        message: "This is reset API",
+        data: validate,
+      });
+    } catch (error) {
+      return res.send({
+        message: "This is reset API",
+        data: error.message,
+      });
+    }
+  },
+};

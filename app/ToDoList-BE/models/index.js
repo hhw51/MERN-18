@@ -1,18 +1,19 @@
-const sequelize = require("../bin/dbConnection")
+const sequelize = require("../bin/dbConnection");
 
-const users = require("./definitions/users");
-const task = require("./definitions/task");
-const sessions = require("./definitions/sessions");
-// const UserHasTask = require("./definitions/UserHasTask")
-users.hasMany(task,{foreignKey:"userID"})
-task.belongsTo(users,{foreignKey:"userID"})
-users.hasOne(sessions,{
-    foreignKey:"userID"
-})
-sessions.belongsTo(users,{
-    foreignKey:"userID"
-})
-const models ={users,task,sessions};
+const users = require("./definations/users");
+const tasks = require("./definations/tasks");
+const products = require("./definations/products");
+const sessions = require("./definations/sessions");
+
+const models = { users, tasks, products, sessions };
+
+// Relations
+users.hasMany(tasks, { foreignKey: "userID" });
+tasks.belongsTo(users, { foreignKey: "userID" });
+
+users.hasOne(sessions, { foreignKey: "userID" });
+sessions.belongsTo(users, { foreignKey: "userID" });
+
 const db = {};
 
 db.sequelize = sequelize;

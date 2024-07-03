@@ -2,20 +2,22 @@ require("dotenv").config();
 
 const userModel = require("../models/userModel");
 const { compare } = require("bcryptjs");
-const { sign } = require("jsonwebtoken");
+// const { sign } = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   login: async (body) => {
     try {
-      const isUser = await userModel.getUser(body.userName);
-      if (isUser.error || !isUser.response) {
+      console.log(body);
+      const isUser = await userModel.findUser(body.userName);
+      if (!isUser.response) {
         return {
           error: {
-            error: isUser?.error || isUser.response,
             message: "User Not Found!",
           },
         };
       }
+
       const isValid = await compare(
         body.password,
         isUser.response.dataValues.password
@@ -24,123 +26,90 @@ module.exports = {
       if (!isValid) {
         return {
           response: {
-            token: "undefined",
-            message: "invalid credentials",
+            token: undefined,
+            message: "Invalid credentials",
           },
         };
       }
 
+      // Remove sensitive data before signing the token
       delete isUser.response.dataValues.password;
-      const token = sign(isUser.response.dataValues, process.env.SECRET, {
-        expiresIn: 30,
+
+      // Define your payload with the necessary user data
+      const payload = {
+        userId: isUser.response.dataValues.userId,
+        username: isUser.response.dataValues.userName,
+        // Add more data as needed
+      };
+
+      // Check if process.env.SECRET is defined and non-empty
+      if (!process.env.SECRET) {
+        throw new Error("Secret key not configured properly");
+      }
+
+      // Sign the JWT with payload, secret key, and options
+      const token = jwt.sign(payload, process.env.SECRET, {
+        expiresIn: "30s", // Example expiry time
       });
 
-      //store in session table
-
+      // Optionally, store session information or return the token
       return {
         response: {
+          response: isUser,
           token: token,
-          message: "loggen in successfully!",
+          message: "Logged in successfully!",
         },
       };
     } catch (error) {
+      // console.log("Service Error:", error);
       return {
         error: error,
       };
     }
   },
 };
+//   login: async (body) => {
+//     try {
+//       const isUser = await userModel.findUser(body.userName);
+//       if (isUser.error || !isUser.response) {
+//         return {
+//           error: {
+//             error: isUser?.error || !isUser.response,
+//             message: "User Not Found!",
+//           },
+//         };
+//       }
+//       const isValid = await compare(
+//         body.password,
+//         isUser.response.dataValues.password
+//       );
 
+//       if (!isValid) {
+//         return {
+//           response: {
+//             token: "undefined",
+//             message: "invalid credentials",
+//           },
+//         };
+//       }
 
-//middleware
+//       delete isUser.response.dataValues.password;
+//       const token = sign(isUser.response.dataValues, process.env.SECRET, {
+//         expiresIn: 30,
+//       });
 
-require("dotenv").config();
-const { date } = require("joi");
-const { verify } = require("jsonwebtoken");
+//       //store in session table
 
-module.exports = {
-  protected: async (req, res, next) => {
-    try {
-      const token = req.cookies.auth;
-      if (token == "undefined") {
-        return res.send({
-          response: {
-            message: "unauthorized user!",
-            response: false,
-          },
-        });
-      }
-
-      verify(token, process.env.SECRET, (error, data) => {
-        if (error) {
-          return res.send({
-            response: {
-              message: "Forbidden access!",
-              response: false,
-            },
-          });
-        }
-
-        // seesion get session from the token using token
-
-        req.userData = data;
-        next();
-      });
-    } catch (error) {
-      return res.send({
-        error: error,
-      });
-    }
-  },
-};
-
-
-//auth controller
-const joi = require("joi");
-const authService = require("../services/authService");
-
-const loginSchema = joi.object().keys({
-  userName: joi.string().required(),
-  password: joi.string().min(6).max(18).required(),
-});
-
-module.exports = {
-  login: async (req, res) => {
-    try {
-      const validate = await loginSchema.validateAsync(req.body);
-      const login = await authService.login(validate);
-
-      if (login.error) {
-        return res.send({
-          error: login.error,
-        });
-      }
-
-      res.cookie("auth", login.response.token, {
-        maxAge: 30000,
-      });
-      return res.send({
-        response: login.response,
-      });
-    } catch (error) {
-      return res.send({
-        message: error.message,
-      });
-    }
-  },
-
-  logout: (req, res) => {
-    console.log(req.body);
-    return res.send({
-      message: "logout Api",
-      data: req.body,
-    });
-  },
-
-  resetPassword: (req, res) => {
-    return res.send({
-      message: "reset password Api",
-    });
-  },
-};
-
+//       return {
+//         response: {
+//           token: token,
+//           message: "loggen in successfully!",
+//         },
+//       };
+//     } catch (error) {
+//       return {
+//         error: error,
+//       };
+//     }
+//   },
+// };

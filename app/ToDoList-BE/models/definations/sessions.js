@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../../bin/dbConnection");
-const users = require("./users");
+
 class sessions extends Model {}
 
 sessions.init(
@@ -10,24 +10,23 @@ sessions.init(
       type: DataTypes.STRING(255),
     },
     token: {
+      type: DataTypes.STRING(255),
       allowNull: false,
-      type: DataTypes.STRING(1000),
-      unique:true
     },
-    //    foreign key always in many table , in case of 1-many
     userID: {
-        allowNull:false,
-        type:DataTypes.STRING(255),
-        references:{
-            model:users,
-            key:"userID"
-        },
+      allowNull: false,
+      unique: true,
+      type: DataTypes.STRING(255),
+      references: {
+        model: "users",
+        key: "userID",
+      },
     },
   },
   {
     timestamps: true,
     paranoid: true,
-    tableName: "tasks",
+    tableName: "sessions",
     sequelize,
   }
 );

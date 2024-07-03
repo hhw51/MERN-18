@@ -1,105 +1,129 @@
-const joi = require("joi");
 const userService = require("../services/userService");
-const { response } = require("../app");
+const joi = require("joi");
+
 const createUserSchema = joi.object().keys({
   userName: joi.string().min(3).max(34).required(),
-  password: joi.string().min(6).max(34).required(),
+  firstName: joi.string().min(3).max(34).required(),
+  lastName: joi.string().min(3).max(34).required(),
+  password: joi.string().min(3).max(34).required(),
 });
-const deleteUserSchema = joi.object().keys({
-  userID: joi.string().length(36).required(),
-});
+
 const updateUserSchema = joi.object().keys({
-  userID: joi.string().length(36).required(),
+  userId: joi.string().length(36).required(),
   userName: joi.string().min(3).max(34),
-  // firstName: joi.string().min(3).max(34).required(),
-  // lastName: joi.string().min(3).max(34).required(),
-})
-const obj = {
+  firstName: joi.string().min(3).max(34).required(),
+  lastName: joi.string().min(3).max(34).required(),
+});
+
+const findUserSchema = joi.object().keys({
+  userId: joi.array().single().required(),
+});
+
+module.exports = {
   createUser: async (req, res) => {
     try {
-      const validatee = await createUserSchema.validateAsync(req.body);
-      const user = await userService.createUser(validatee);
+      const validate = await createUserSchema.validateAsync(req.body);
+      const user = await userService.createUser(validate);
 
       if (user.error) {
-        console.log(user.error);
-
         return res.send({
           error: user.error,
         });
       }
-      return res.send({ response: user.response });
+
+      return res.send({
+        response: user.response,
+      });
     } catch (error) {
-      console.log(error);
-      return res.send({ error: error });
+      return res.send({
+        error: error,
+      });
     }
   },
-  getAllUser: async (req, res) => {
+
+  deleteUser: async (req, res) => {
     try {
-      const users = await userService.getAllUser();
+      const validate = await findUserSchema.validateAsync(req.body);
+      console.log(validate);
+      const user = await userService.deleteUser(validate.userId);
+
+      if (user.error) {
+        return res.send({
+          error: user.error,
+        });
+      }
+
+      return res.send({
+        response: user.response,
+      });
+    } catch (error) {
+      return res.send({
+        error: error,
+      });
+    }
+  },
+
+  findUser: async (req, res) => {
+    try {
+      const validate = await findUserSchema.validateAsync(req.query);
+      console.log(validate.userId);
+      const user = await userService.findUser(validate.userId);
+
+      if (user.error) {
+        return res.send({
+          error: user.error,
+        });
+      }
+
+      return res.send({
+        response: user.response,
+      });
+    } catch (error) {
+      return res.send({
+        error: error,
+      });
+    }
+  },
+  getAllUsers: async (req, res) => {
+    try {
+      const users = await userService.getAllUsers();
+
       if (users.error) {
         return res.send({
           error: users.error,
         });
       }
+
       return res.send({
         response: users.response,
       });
     } catch (error) {
-      return res.send({ error: error });
-    }
-  },
-  deleteUser: async (req, res) => {
-    try {
-      const validate = await deleteUserSchema.validateAsync(req.query);
-      console.log(validate)
-      const user = await userService.deleteUser(validate.userID);
-      
-      if (user.error) {
-        return res.send({
-          error: user.error,
-        }); 
-      }
-      return res.send({
-        response: user.response,
-      });
-    } catch (error) {
-      console.log(error," from controller")
-      return res.send({
-        error: error,
-      });
-    }
-  },
-  updateUser: async(req, res) => {
-    try {
-      const validate = await updateUserSchema.validateAsync(req.query);
-      console.log(validate)
-      const user = await userService.updateUser(validate.userID);
-      
-      if (user.error) {
-        return res.send({
-          error: user.error,
-        }); 
-      }
-      return res.send({
-        response: user.response,
-      });
-    } catch (error) {
-      console.log(error," from controller")
       return res.send({
         error: error,
       });
     }
   },
 
-  editUser: (req, res) => {
-    return res.send({
-      message: "editUser API",
-    });
-  },
-  getUser: (req, res) => {
-    return res.send({
-      message: "getUser API",
-    });
+  updateUser: async (req, res) => {
+    try {
+      const validate = await updateUserSchema.validateAsync(req.body);
+      const user = await userService.updteUser(validate);
+      console.log("user:", user);
+
+      if (user.error) {
+        return res.send({
+          error: user.error,
+        });
+      }
+
+      return res.send({
+        response: user.response,
+      });
+    } catch (error) {
+      console.log("Error from Controll:", error);
+      return res.send({
+        error: error,
+      });
+    }
   },
 };
-module.exports = obj;
